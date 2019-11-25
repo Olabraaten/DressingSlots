@@ -1,0 +1,7 @@
+## Interface: 80205
+## Title: DressingSlots
+## Notes: Adds gear slots to the dressing room.
+## Version: 1.0.0
+## Author: Crinseth
+
+Core.lua
