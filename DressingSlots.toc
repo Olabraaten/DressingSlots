@@ -3,5 +3,8 @@
 ## Notes: Adds gear slots to the dressing room.
 ## Version: 1.0.0
 ## Author: Crinseth
+## OptionalDeps: LibStub, Masque
 
+LibStub\LibStub.lua
+Util.lua
 Core.lua
