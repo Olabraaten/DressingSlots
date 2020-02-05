@@ -21,7 +21,6 @@ local SLOTS = {
 	"MainHandSlot",
 	"SecondaryHandSlot",
 }
-
 local HIDDEN_SOURCES = {
 	[77344] = true, -- head
 	[77343] = true, -- shoulder
@@ -30,9 +29,16 @@ local HIDDEN_SOURCES = {
 	[83203] = true, -- tabard
 	[84223] = true, -- waist
 }
+local NORMAL_MODE = 1
+local START_UNDRESSED_MODE = 2
+local SINGLE_ITEM_MODE = 3
+if DressMode == nil then
+    DressMode = NORMAL_MODE
+end
 
 local buttons = {}
 local undressButton
+local settingsDropdown
 
 local updateSlots
 
@@ -58,6 +64,7 @@ local function onClick(self, button)
 		local slotID, slotTexture = GetInventorySlotInfo(self.slot)
         DressUpFrame.ModelScene:GetPlayerActor():UndressSlot(slotID)
         updateSlots()
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	elseif self.item and IsModifiedClick() then
 		HandleModifiedItemClick(self.item)
 	end
@@ -126,6 +133,58 @@ undressButton:SetPoint("BOTTOMLEFT", 6, 4)
 undressButton:SetScript("OnClick", function()
     DressUpFrame.ModelScene:GetPlayerActor():Undress()
     updateSlots()
+    PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
+end)
+
+-- Settings dropdown
+settingsDropdown = CreateFrame("Frame", "DressingSlotsSettingsDropdown", nil, "UIDropDownMenuTemplate")
+settingsDropdown.initialize = function(self, level)
+    local info = UIDropDownMenu_CreateInfo()
+
+    info.isTitle = 1
+    info.text = "DressingSlots mode"
+    info.notCheckable = 1
+    UIDropDownMenu_AddButton(info, level)
+
+    info.disabled = nil
+    info.isTitle = nil
+    info.notCheckable = nil
+    info.text = "Normal"
+    info.checked = function()
+        return DressMode == NORMAL_MODE
+    end
+    info.func = function()
+        DressMode = NORMAL_MODE
+    end
+    UIDropDownMenu_AddButton(info, level)
+    info.text = "Start undressed"
+    info.checked = function()
+        return DressMode == START_UNDRESSED_MODE
+    end
+    info.func = function()
+        DressMode = START_UNDRESSED_MODE
+    end
+    UIDropDownMenu_AddButton(info, level)
+    info.text = "Single item"
+    info.checked = function()
+        return DressMode == SINGLE_ITEM_MODE
+    end
+    info.func = function()
+        DressMode = SINGLE_ITEM_MODE
+    end
+    UIDropDownMenu_AddButton(info, level)
+end
+
+-- Settings dropdown toggle button
+local showSettingsButton = CreateFrame("DropDownToggleButton", "ShowSettingsButton", DressUpFrame)
+showSettingsButton:SetSize(27, 27)
+showSettingsButton:SetNormalTexture("Interface/ChatFrame/UI-ChatIcon-ScrollDown-Up")
+showSettingsButton:SetPushedTexture("Interface/ChatFrame/UI-ChatIcon-ScrollDown-Down")
+showSettingsButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
+showSettingsButton:SetPoint("BOTTOMLEFT", 85, 1)
+showSettingsButton:SetScript("OnClick", function(self)
+    ToggleDropDownMenu(1, nil, settingsDropdown, self, 0, 0)
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 end)
 
 -- Updates slot buttons content based on PlayerActor
@@ -156,9 +215,16 @@ function SetupPlayerForModelScene(...)
     local resultSetupPlayerForModelScene = _SetupPlayerForModelScene(...)
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
 
+    if DressMode == START_UNDRESSED_MODE then
+        DressUpFrame.ModelScene:GetPlayerActor():Undress()
+    end
+
     -- Update slots when a gear piece has changed
     local _TryOn = playerActor.TryOn
     playerActor.TryOn = function (...)
+        if DressMode == SINGLE_ITEM_MODE then
+            DressUpFrame.ModelScene:GetPlayerActor():Undress()
+        end
         local resultTryOn = _TryOn(...)
         updateSlots()
         return resultTryOn

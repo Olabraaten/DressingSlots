@@ -1,9 +1,10 @@
 ## Interface: 80300
 ## Title: DressingSlots
 ## Notes: Adds gear slots to the dressing room.
-## Version: 1.1.1
+## Version: 1.2.0
 ## Author: Crinseth
 ## OptionalDeps: LibStub, Masque
+## SavedVariablesPerCharacter: DressMode
 
 LibStub\LibStub.lua
 Util.lua
