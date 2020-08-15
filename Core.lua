@@ -38,6 +38,7 @@ end
 
 local buttons = {}
 local undressButton
+local showSettingsButton
 local settingsDropdown
 
 local updateSlots
@@ -53,8 +54,10 @@ local function showButtons(show)
     end
     if show then
         undressButton:Show()
+        showSettingsButton:Show()
     else
         undressButton:Hide()
+        showSettingsButton:Hide()
     end
 end
 
@@ -176,7 +179,7 @@ settingsDropdown.initialize = function(self, level)
 end
 
 -- Settings dropdown toggle button
-local showSettingsButton = CreateFrame("DropDownToggleButton", "ShowSettingsButton", DressUpFrame)
+showSettingsButton = CreateFrame("DropDownToggleButton", "ShowSettingsButton", DressUpFrame)
 showSettingsButton:SetSize(27, 27)
 showSettingsButton:SetNormalTexture("Interface/ChatFrame/UI-ChatIcon-ScrollDown-Up")
 showSettingsButton:SetPushedTexture("Interface/ChatFrame/UI-ChatIcon-ScrollDown-Down")
