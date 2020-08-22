@@ -214,33 +214,35 @@ end
 -- Hook onto PlayerActor creation in order to hook onto its functions
 local _SetupPlayerForModelScene = SetupPlayerForModelScene
 function SetupPlayerForModelScene(...)
-    showButtons(true)
     local resultSetupPlayerForModelScene = _SetupPlayerForModelScene(...)
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
+    if playerActor ~= nil then
+        showButtons(true)
 
-    if DressMode == START_UNDRESSED_MODE then
-        DressUpFrame.ModelScene:GetPlayerActor():Undress()
-    end
-
-    -- Update slots when a gear piece has changed
-    local _TryOn = playerActor.TryOn
-    playerActor.TryOn = function (...)
-        if DressMode == SINGLE_ITEM_MODE then
+        if DressMode == START_UNDRESSED_MODE then
             DressUpFrame.ModelScene:GetPlayerActor():Undress()
         end
-        local resultTryOn = _TryOn(...)
-        updateSlots()
-        return resultTryOn
-    end
 
-    -- Update slots when reset button has been pressed
-    local _Dress = playerActor.Dress
-    playerActor.Dress = function (...)
-        local resultDress = _Dress(...)
-        updateSlots()
-        return resultDress
+        -- Update slots when a gear piece has changed
+        local _TryOn = playerActor.TryOn
+        playerActor.TryOn = function (...)
+          if DressMode == SINGLE_ITEM_MODE then
+                DressUpFrame.ModelScene:GetPlayerActor():Undress()
+            end
+            local resultTryOn = _TryOn(...)
+            updateSlots()
+            return resultTryOn
+        end
+
+        -- Update slots when reset button has been pressed
+        local _Dress = playerActor.Dress
+        playerActor.Dress = function (...)
+            local resultDress = _Dress(...)
+            updateSlots()
+            return resultDress
+        end
+        DressingWait(0.1, updateSlots, nil)
     end
-    DressingWait(0.1, updateSlots, nil)
     return resultSetupPlayerForModelScene
 end
 

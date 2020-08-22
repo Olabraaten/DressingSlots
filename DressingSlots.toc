@@ -1,7 +1,7 @@
 ## Interface: 90001
 ## Title: DressingSlots
 ## Notes: Adds gear slots to the dressing room.
-## Version: 1.2.1
+## Version: 1.2.2
 ## Author: Crinseth
 ## OptionalDeps: LibStub, Masque
 ## SavedVariablesPerCharacter: DressMode
