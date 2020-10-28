@@ -40,6 +40,7 @@ local buttons = {}
 local undressButton
 local showSettingsButton
 local settingsDropdown
+local resizeButton
 
 local updateSlots
 
@@ -132,7 +133,7 @@ end
 undressButton = CreateFrame("Button", nil, DressUpFrame, "UIPanelButtonTemplate")
 undressButton:SetSize(80, 22)
 undressButton:SetText("Undress")
-undressButton:SetPoint("BOTTOMLEFT", 6, 4)
+undressButton:SetPoint("BOTTOMLEFT", 7, 4)
 undressButton:SetScript("OnClick", function()
     DressUpFrame.ModelScene:GetPlayerActor():Undress()
     updateSlots()
@@ -190,6 +191,22 @@ showSettingsButton:SetScript("OnClick", function(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 end)
 
+-- Resize window button
+resizeButton = CreateFrame("Button", nil, DressUpFrame)
+resizeButton:SetSize(16, 16)
+resizeButton:SetNormalTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Up")
+resizeButton:SetHighlightTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Highlight")
+resizeButton:SetPushedTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Down")
+resizeButton:SetPoint("BOTTOMRIGHT", -2, 2)
+resizeButton:SetScript("OnMouseDown", function(self, button)
+    DressUpFrame:StartSizing("BOTTOMRIGHT")
+end)
+resizeButton:SetScript("OnMouseUp", function(self, button)
+    DressUpFrame:StopMovingOrSizing()
+    DressHeight = DressUpFrame:GetHeight()
+    DressWidth = DressUpFrame:GetWidth()
+end)
+
 -- Updates slot buttons content based on PlayerActor
 updateSlots = function()
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
@@ -214,6 +231,27 @@ end
 -- Hook onto PlayerActor creation in order to hook onto its functions
 local _SetupPlayerForModelScene = SetupPlayerForModelScene
 function SetupPlayerForModelScene(...)
+    -- Resize stuff
+    DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", -20, 4)
+    DressUpFrame:SetResizable(true)
+    DressUpFrame:SetMinResize(334, 423)
+    if DressHeight ~= nil then
+        DressUpFrame:SetSize(DressWidth, DressHeight)
+    end
+    -- Listen for minimize/maximize to reset size
+    local maximize = DressUpFrame.MaximizeMinimizeFrame.MaximizeButton:GetScript("OnClick")
+    DressUpFrame.MaximizeMinimizeFrame.MaximizeButton:SetScript("OnClick", function(self)
+        DressHeight = nil
+        DressWidth = nil
+        maximize(self)
+    end)
+    local minimize = DressUpFrame.MaximizeMinimizeFrame.MinimizeButton:GetScript("OnClick")
+    DressUpFrame.MaximizeMinimizeFrame.MinimizeButton:SetScript("OnClick", function(self)
+        DressHeight = nil
+        DressWidth = nil
+        minimize(self)
+    end)
+
     local resultSetupPlayerForModelScene = _SetupPlayerForModelScene(...)
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
     if playerActor ~= nil then
