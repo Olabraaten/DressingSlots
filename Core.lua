@@ -236,7 +236,8 @@ function SetupPlayerForModelScene(...)
     DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", -20, 4)
     DressUpFrame:SetResizable(true)
     DressUpFrame:SetMinResize(334, 423)
-    if DressHeight ~= nil then
+    DressUpFrame:SetMaxResize(DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
+    if DressHeight ~= nil and DressHeight <= DressUpFrame:GetTop() and DressWidth <= (DressUpFrame:GetTop()) then
         DressUpFrame:SetSize(DressWidth, DressHeight)
     end
     -- Listen for minimize/maximize to reset size
