@@ -237,8 +237,9 @@ function SetupPlayerForModelScene(...)
     DressUpFrame:SetResizable(true)
     DressUpFrame:SetMinResize(334, 423)
     DressUpFrame:SetMaxResize(DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
-    if DressHeight ~= nil and DressHeight <= DressUpFrame:GetTop() and DressWidth <= (DressUpFrame:GetTop()) then
+    if DressHeight and DressHeight <= DressUpFrame:GetTop() and DressWidth <= (DressUpFrame:GetTop()) then
         DressUpFrame:SetSize(DressWidth, DressHeight)
+        UpdateUIPanelPositions(self)
     end
     -- Listen for minimize/maximize to reset size
     local maximize = DressUpFrame.MaximizeMinimizeFrame.MaximizeButton:GetScript("OnClick")
@@ -256,7 +257,7 @@ function SetupPlayerForModelScene(...)
 
     local resultSetupPlayerForModelScene = _SetupPlayerForModelScene(...)
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-    if playerActor ~= nil then
+    if playerActor then
         showButtons(true)
 
         if DressMode == START_UNDRESSED_MODE then
@@ -303,6 +304,9 @@ end
 -- Hide buttons for mount preview
 local _DressUpMount = DressUpMount
 function DressUpMount(...)
-    showButtons(false)
+    -- Trying to preview a crafting recipe will trigger this code without this check
+    if ... ~= 0 then
+        showButtons(false)
+    end
     return _DressUpMount(...)
 end
