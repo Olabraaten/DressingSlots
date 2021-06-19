@@ -211,22 +211,34 @@ end)
 -- Updates slot buttons content based on PlayerActor
 updateSlots = function()
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-    for slot, button in pairs(buttons) do
-        local slotID, slotTexture = GetInventorySlotInfo(slot)
-		local sourceID = playerActor:GetSlotTransmogSources(slotID)
-		if sourceID == NO_TRANSMOG_SOURCE_ID or HIDDEN_SOURCES[sourceID] then
-			button.item = nil
-			button.text = nil
-			button.icon:SetTexture(slotTexture)
-			button:Disable()
-		else
-			local categoryID, appearanceID, canEnchant, icon, isCollected, link = C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
-			button.item = link
-			button.text = UNKNOWN
-			button.icon:SetTexture(icon or [[Interface\Icons\INV_Misc_QuestionMark]])
-			button:Enable()
-		end
+    if playerActor then
+        for slot, button in pairs(buttons) do
+            local slotID, slotTexture = GetInventorySlotInfo(slot)
+            local itemTransmogInfo = playerActor:GetItemTransmogInfo(slotID)
+		    if itemTransmogInfo == nil or HIDDEN_SOURCES[itemTransmogInfo.appearanceID] then
+			    button.item = nil
+			    button.text = nil
+			    button.icon:SetTexture(slotTexture)
+			    button:Disable()
+		    else
+			    local categoryID, appearanceID, canEnchant, icon, isCollected, link = C_TransmogCollection.GetAppearanceSourceInfo(itemTransmogInfo.appearanceID)
+			    button.item = link
+			    button.text = UNKNOWN
+			    button.icon:SetTexture(icon or [[Interface\Icons\INV_Misc_QuestionMark]])
+			    button:Enable()
+		    end
+        end
     end
+end
+
+-- Hook onto save button update events to trigger slot updates
+local _DressUpFrameOutfitDropDown_UpdateSaveButton = DressUpFrameOutfitDropDown.UpdateSaveButton
+function DressUpFrameOutfitDropDown:UpdateSaveButton(...)
+    if DressMode == SINGLE_ITEM_MODE then
+        DressUpFrame.ModelScene:GetPlayerActor():Undress()
+    end
+    updateSlots()
+    return _DressUpFrameOutfitDropDown_UpdateSaveButton(self, ...)
 end
 
 -- Hook onto PlayerActor creation in order to hook onto its functions
@@ -259,39 +271,11 @@ function SetupPlayerForModelScene(...)
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
     if playerActor then
         showButtons(true)
-
         if DressMode == START_UNDRESSED_MODE then
             DressUpFrame.ModelScene:GetPlayerActor():Undress()
         end
-
-        -- Update slots when a gear piece has changed
-        local _TryOn = playerActor.TryOn
-        playerActor.TryOn = function (...)
-          if DressMode == SINGLE_ITEM_MODE then
-                DressUpFrame.ModelScene:GetPlayerActor():Undress()
-            end
-            local resultTryOn = _TryOn(...)
-            updateSlots()
-            return resultTryOn
-        end
-
-        -- Update slots when reset button has been pressed
-        local _Dress = playerActor.Dress
-        playerActor.Dress = function (...)
-            local resultDress = _Dress(...)
-            updateSlots()
-            return resultDress
-        end
-        DressingWait(0.1, updateSlots, nil)
     end
     return resultSetupPlayerForModelScene
-end
-
-local _DressUpSources = DressUpSources
-function DressUpSources(...)
-    local resultDressUpSources = _DressUpSources(...)
-    DressingWait(0.1, updateSlots, nil)
-    return resultDressUpSources
 end
 
 -- Hide buttons for pet preview

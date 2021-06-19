@@ -7,5 +7,4 @@
 ## SavedVariablesPerCharacter: DressMode, DressHeight, DressWidth
 
 LibStub\LibStub.lua
-Util.lua
 Core.lua
