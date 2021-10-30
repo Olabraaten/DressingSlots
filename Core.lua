@@ -204,10 +204,10 @@ for i, slot in ipairs(SLOTS) do
 end
 
 -- Undress button
-undressButton = CreateFrame("Button", nil, DressUpFrame, "UIPanelButtonTemplate")
+undressButton = CreateFrame("Button", nil, DressUpFrame.OutfitDetailsPanel, "UIPanelButtonTemplate")
 undressButton:SetSize(80, 22)
 undressButton:SetText("Undress")
-undressButton:SetPoint("BOTTOMLEFT", 7, 4)
+undressButton:SetPoint("BOTTOMLEFT", 7, 9)
 undressButton:SetScript("OnClick", function()
     DressUpFrame.ModelScene:GetPlayerActor():Undress()
     updateSlots()
@@ -215,10 +215,10 @@ undressButton:SetScript("OnClick", function()
 end)
 
 -- Toggle sheathe button
-toggleSheatheButton = CreateFrame("Button", nil, DressUpFrame, "UIPanelButtonTemplate")
+toggleSheatheButton = CreateFrame("Button", nil, DressUpFrame.OutfitDetailsPanel, "UIPanelButtonTemplate")
 toggleSheatheButton:SetSize(120, 22)
 toggleSheatheButton:SetText("Toggle sheathe")
-toggleSheatheButton:SetPoint("BOTTOMLEFT", 87, 4)
+toggleSheatheButton:SetPoint("BOTTOMLEFT", 87, 9)
 toggleSheatheButton:SetScript("OnClick", function()
     local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
     playerActor:SetSheathed(not playerActor:GetSheathed())
@@ -265,12 +265,12 @@ settingsDropdown.initialize = function(self, level)
 end
 
 -- Settings dropdown toggle button
-showSettingsButton = CreateFrame("DropDownToggleButton", "ShowSettingsButton", DressUpFrame)
+showSettingsButton = CreateFrame("DropDownToggleButton", "ShowSettingsButton", DressUpFrame.OutfitDetailsPanel)
 showSettingsButton:SetSize(27, 27)
 showSettingsButton:SetNormalTexture("Interface/ChatFrame/UI-ChatIcon-ScrollDown-Up")
 showSettingsButton:SetPushedTexture("Interface/ChatFrame/UI-ChatIcon-ScrollDown-Down")
 showSettingsButton:SetHighlightTexture("Interface/Buttons/UI-Common-MouseHilight", "ADD")
-showSettingsButton:SetPoint("BOTTOMLEFT", 207, 1)
+showSettingsButton:SetPoint("BOTTOMLEFT", 205, 6)
 showSettingsButton:SetScript("OnClick", function(self)
     ToggleDropDownMenu(1, nil, settingsDropdown, self, 0, 0)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -393,3 +393,40 @@ end)
 DressUpFrame.ResetButton:HookScript("OnShow", function ()
     showButtons(true)
 end)
+
+
+
+local hasHookedClick = false
+local _Refresh = DressUpFrame.OutfitDetailsPanel.Refresh
+function DressUpFrame.OutfitDetailsPanel:Refresh()
+    local result = _Refresh(self)
+    for frame, _ in DressUpFrame.OutfitDetailsPanel.slotPool:EnumerateActive() do
+        hasHookedClick = true
+        frame:HookScript("OnMouseUp", function (self, button)
+            if button == "RightButton" then
+                local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
+                local itemTransmogInfo = playerActor:GetItemTransmogInfo(frame.slotID)
+                print(frame.slotID)
+                if itemTransmogInfo then
+                    if itemTransmogInfo.secondaryAppearanceID ~= Constants.Transmog.NoTransmogID then
+                        if frame.transmogID == itemTransmogInfo.appearanceID then
+                            itemTransmogInfo.appearanceID = itemTransmogInfo.secondaryAppearanceID
+                        end
+                        itemTransmogInfo.secondaryAppearanceID = Constants.Transmog.NoTransmogID
+                        playerActor:SetItemTransmogInfo(itemTransmogInfo, frame.slotID, false)
+                    elseif frame.transmogID == itemTransmogInfo.illusionID then
+                        itemTransmogInfo.illusionID = Constants.Transmog.NoTransmogID
+                        playerActor:SetItemTransmogInfo(itemTransmogInfo, frame.slotID, false)
+                    else
+                        playerActor:UndressSlot(frame.slotID)
+                    end
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                end
+            end
+        end)
+    end
+    if hasHookedClick then
+        DressUpFrame.OutfitDetailsPanel.Refresh = _Refresh
+    end
+    return result
+end
