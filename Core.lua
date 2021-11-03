@@ -68,19 +68,16 @@ function SetupPlayerForModelScene(...)
     return _SetupPlayerForModelScene(...)
 end
 
--- Hook onto right click in appearance list to remove single items/enchants
-local hasHookedClick = false
-local _Refresh = DressUpFrame.OutfitDetailsPanel.Refresh
-function DressUpFrame.OutfitDetailsPanel:Refresh()
-    local result = _Refresh(self)
-    for frame, _ in DressUpFrame.OutfitDetailsPanel.slotPool:EnumerateActive() do
-        hasHookedClick = true
+local _Acquire = DressUpFrame.OutfitDetailsPanel.slotPool.Acquire
+function DressUpFrame.OutfitDetailsPanel.slotPool:Acquire()
+    local frame, isNew = _Acquire(self)
+    if isNew then
         frame:HookScript("OnMouseUp", function (self, button)
             if button == "RightButton" then
                 local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
                 local itemTransmogInfo = playerActor:GetItemTransmogInfo(frame.slotID)
                 if itemTransmogInfo then
-                    if itemTransmogInfo.secondaryAppearanceID ~= Constants.Transmog.NoTransmogID then
+                    if itemTransmogInfo.secondaryAppearanceID ~= Constants.Transmog.NoTransmogID and itemTransmogInfo.secondaryAppearanceID ~= -1 then
                         if frame.transmogID == itemTransmogInfo.appearanceID then
                             itemTransmogInfo.appearanceID = itemTransmogInfo.secondaryAppearanceID
                         end
@@ -103,8 +100,5 @@ function DressUpFrame.OutfitDetailsPanel:Refresh()
             end
         end)
     end
-    if hasHookedClick then
-        DressUpFrame.OutfitDetailsPanel.Refresh = _Refresh
-    end
-    return result
+    return frame, isNew
 end
