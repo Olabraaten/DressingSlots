@@ -1,9 +1,7 @@
 ## Interface: 90105
 ## Title: DressingSlots
-## Notes: Adds gear slots to the dressing room.
+## Notes: Extends the dressing room with extra functionality.
 ## Version: 1.3.5
 ## Author: Crinseth
-## OptionalDeps: LibStub, Masque
-## SavedVariablesPerCharacter: DressMode, DressHeight, DressWidth
 
 Core.lua
