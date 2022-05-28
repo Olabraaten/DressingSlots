@@ -45,9 +45,7 @@ local function showButtons(show)
     for slot, slotButtons in pairs(buttons) do
         for i, button in ipairs(slotButtons) do
             if show and ShowSlots then
-                if i == 1 then
-                    button:Show()
-                end
+                button:Show()
             else
                 button:Hide()
             end
@@ -250,7 +248,7 @@ updateSlots = function()
 			    secondaryButton.text = UNKNOWN
 			    secondaryButton.icon:SetTexture(icon or [[Interface\Icons\INV_Misc_QuestionMark]])
 			    secondaryButton:Enable()
-                if DressUpFrame.ResetButton:IsShown() then
+                if DressUpFrame.ResetButton:IsShown() and ShowSlots then
                     secondaryButton:Show()
                 end
             else

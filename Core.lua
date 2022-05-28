@@ -75,6 +75,18 @@ function SetupPlayerForModelScene(...)
     return _SetupPlayerForModelScene(...)
 end
 
+-- Special handling because opening outfit links is special...
+local _ConfigureSize = DressUpFrame.ConfigureSize
+function DressUpFrame:ConfigureSize(isMinimized)
+    local result = _ConfigureSize(self, isMinimized)
+    if DressHeight and DressWidth then
+        DressUpFrame:SetSize(DressWidth, DressHeight)
+        UpdateUIPanelPositions(self)
+    end
+    return result
+end
+
+-- Handle right-clicks for each "slot" in the appearance list
 local _Acquire = DressUpFrame.OutfitDetailsPanel.slotPool.Acquire
 function DressUpFrame.OutfitDetailsPanel.slotPool:Acquire()
     local frame, isNew = _Acquire(self)
