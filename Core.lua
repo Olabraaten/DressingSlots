@@ -1,3 +1,4 @@
+local version, build, date, tocversion = GetBuildInfo()
 local undressButton
 local toggleSheatheButton
 local resizeButton
@@ -47,14 +48,19 @@ DressUpFrame.ResetButton:HookScript("OnShow", function ()
     resizeButton:Show()
 end)
 
--- Hook onto PlayerActor creation in order to hook onto its functions
-local _SetupPlayerForModelScene = SetupPlayerForModelScene
-function SetupPlayerForModelScene(...)
+-- Hook onto DressUpFrame ConfigureSize in order to provide resize functionality
+local _ConfigureSize = DressUpFrame.ConfigureSize
+function DressUpFrame:ConfigureSize(isMinimized)
+    local result = _ConfigureSize(self, isMinimized)
     -- Resize stuff
-    DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", -20, 4)
+    DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", -14, 4)
     DressUpFrame:SetResizable(true)
-    DressUpFrame:SetMinResize(334, 423)
-    DressUpFrame:SetMaxResize(DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
+    if tocversion < 100000 then
+        DressUpFrame:SetMinResize(334, 423)
+        DressUpFrame:SetMaxResize(DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
+    else
+        DressUpFrame:SetResizeBounds(334, 423, DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
+    end
     if DressHeight and DressHeight <= DressUpFrame:GetTop() and DressWidth <= (DressUpFrame:GetTop()) then
         DressUpFrame:SetSize(DressWidth, DressHeight)
         UpdateUIPanelPositions(self)
@@ -72,17 +78,6 @@ function SetupPlayerForModelScene(...)
         DressWidth = nil
         minimize(self)
     end)
-    return _SetupPlayerForModelScene(...)
-end
-
--- Special handling because opening outfit links is special...
-local _ConfigureSize = DressUpFrame.ConfigureSize
-function DressUpFrame:ConfigureSize(isMinimized)
-    local result = _ConfigureSize(self, isMinimized)
-    if DressHeight and DressWidth then
-        DressUpFrame:SetSize(DressWidth, DressHeight)
-        UpdateUIPanelPositions(self)
-    end
     return result
 end
 
