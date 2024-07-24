@@ -259,10 +259,10 @@ updateSlots = function()
 end
 
 -- Hook onto save button update events to trigger slot updates
-local _DressUpFrameOutfitDropDown_UpdateSaveButton = DressUpFrameOutfitDropDown.UpdateSaveButton
-function DressUpFrameOutfitDropDown:UpdateSaveButton(...)
+local _DressUpFrameOutfitDropdown_UpdateSaveButton = DressUpFrameOutfitDropdown.UpdateSaveButton
+function DressUpFrameOutfitDropdown:UpdateSaveButton(...)
     updateSlots()
-    return _DressUpFrameOutfitDropDown_UpdateSaveButton(self, ...)
+    return _DressUpFrameOutfitDropdown_UpdateSaveButton(self, ...)
 end
 
 DressUpFrame.ResetButton:HookScript("OnHide", function ()

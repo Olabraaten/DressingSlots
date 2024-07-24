@@ -1,7 +1,7 @@
-## Interface: 100007
+## Interface: 110000, 110002
 ## Title: DressingSlots
 ## Notes: Extends the dressing room with extra functionality.
-## Version: 1.4.2
+## Version: 1.4.3
 ## Author: Crinseth
 ## OptionalDeps: LibStub, Masque
 ## SavedVariablesPerCharacter: ShowSlots, DressHeight, DressWidth
