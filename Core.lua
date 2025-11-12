@@ -4,7 +4,7 @@ local toggleSheatheButton
 local resizeButton
 
 -- Undress button
-undressButton = CreateFrame("Button", nil, DressUpFrame.OutfitDetailsPanel, "UIPanelButtonTemplate")
+undressButton = CreateFrame("Button", nil, DressUpFrame.CustomSetDetailsPanel, "UIPanelButtonTemplate")
 undressButton:SetSize(80, 22)
 undressButton:SetText("Undress")
 undressButton:SetPoint("BOTTOMLEFT", 8, 9) --7
@@ -14,7 +14,7 @@ undressButton:SetScript("OnClick", function()
 end)
 
 -- Toggle sheathe button
-toggleSheatheButton = CreateFrame("Button", nil, DressUpFrame.OutfitDetailsPanel, "UIPanelButtonTemplate")
+toggleSheatheButton = CreateFrame("Button", nil, DressUpFrame.CustomSetDetailsPanel, "UIPanelButtonTemplate")
 toggleSheatheButton:SetSize(120, 22)
 toggleSheatheButton:SetText("Toggle sheathe")
 toggleSheatheButton:SetPoint("BOTTOMLEFT", 87, 9)
@@ -82,8 +82,8 @@ function DressUpFrame:ConfigureSize(isMinimized)
 end
 
 -- Handle right-clicks for each "slot" in the appearance list
-local _Acquire = DressUpFrame.OutfitDetailsPanel.slotPool.Acquire
-function DressUpFrame.OutfitDetailsPanel.slotPool:Acquire()
+local _Acquire = DressUpFrame.CustomSetDetailsPanel.slotPool.Acquire
+function DressUpFrame.CustomSetDetailsPanel.slotPool:Acquire()
     local frame, isNew = _Acquire(self)
     if isNew then
         frame:HookScript("OnMouseUp", function (self, button)

@@ -1,11 +1,8 @@
-## Interface: 110000, 110002
+## Interface: 120000
 ## Title: DressingSlots
 ## Notes: Extends the dressing room with extra functionality.
-## Version: 1.4.3
+## Version: 1.5.0
 ## Author: Crinseth
-## OptionalDeps: LibStub, Masque
-## SavedVariablesPerCharacter: ShowSlots, DressHeight, DressWidth
+## SavedVariablesPerCharacter: DressHeight, DressWidth
 
-LibStub\LibStub.lua
 Core.lua
-Slots.lua
