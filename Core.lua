@@ -3,8 +3,16 @@ local undressButton
 local toggleSheatheButton
 local resizeButton
 
+-- Temporary support for TWW until Midnight
+local SideDetailPanel
+if tocversion < 120000 then
+    SideDetailPanel = DressUpFrame.OutfitDetailsPanel
+else
+    SideDetailPanel = DressUpFrame.CustomSetDetailsPanel
+end
+
 -- Undress button
-undressButton = CreateFrame("Button", nil, DressUpFrame.CustomSetDetailsPanel, "UIPanelButtonTemplate")
+undressButton = CreateFrame("Button", nil, SideDetailPanel, "UIPanelButtonTemplate")
 undressButton:SetSize(80, 22)
 undressButton:SetText("Undress")
 undressButton:SetPoint("BOTTOMLEFT", 8, 9) --7
@@ -14,7 +22,7 @@ undressButton:SetScript("OnClick", function()
 end)
 
 -- Toggle sheathe button
-toggleSheatheButton = CreateFrame("Button", nil, DressUpFrame.CustomSetDetailsPanel, "UIPanelButtonTemplate")
+toggleSheatheButton = CreateFrame("Button", nil, SideDetailPanel, "UIPanelButtonTemplate")
 toggleSheatheButton:SetSize(120, 22)
 toggleSheatheButton:SetText("Toggle sheathe")
 toggleSheatheButton:SetPoint("BOTTOMLEFT", 87, 9)
@@ -55,12 +63,7 @@ function DressUpFrame:ConfigureSize(isMinimized)
     -- Resize stuff
     DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", -14, 4)
     DressUpFrame:SetResizable(true)
-    if tocversion < 100000 then
-        DressUpFrame:SetMinResize(334, 423)
-        DressUpFrame:SetMaxResize(DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
-    else
-        DressUpFrame:SetResizeBounds(334, 423, DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
-    end
+    DressUpFrame:SetResizeBounds(334, 423, DressUpFrame:GetTop() * 0.8, DressUpFrame:GetTop())
     if DressHeight and DressHeight <= DressUpFrame:GetTop() and DressWidth <= (DressUpFrame:GetTop()) then
         DressUpFrame:SetSize(DressWidth, DressHeight)
         UpdateUIPanelPositions(self)
@@ -82,8 +85,8 @@ function DressUpFrame:ConfigureSize(isMinimized)
 end
 
 -- Handle right-clicks for each "slot" in the appearance list
-local _Acquire = DressUpFrame.CustomSetDetailsPanel.slotPool.Acquire
-function DressUpFrame.CustomSetDetailsPanel.slotPool:Acquire()
+local _Acquire = SideDetailPanel.slotPool.Acquire
+function SideDetailPanel.slotPool:Acquire()
     local frame, isNew = _Acquire(self)
     if isNew then
         frame:HookScript("OnMouseUp", function (self, button)
