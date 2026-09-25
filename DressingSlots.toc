@@ -1,7 +1,7 @@
-## Interface: 120000
+## Interface: 120100
 ## Title: DressingSlots
 ## Notes: Extends the dressing room with extra functionality.
-## Version: 1.5.1
+## Version: 1.5.2
 ## Author: Crinseth
 ## SavedVariablesPerCharacter: DressHeight, DressWidth
 

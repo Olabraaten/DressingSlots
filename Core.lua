@@ -3,13 +3,7 @@ local undressButton
 local toggleSheatheButton
 local resizeButton
 
--- Temporary support for TWW until Midnight
-local SideDetailPanel
-if tocversion < 120000 then
-    SideDetailPanel = DressUpFrame.OutfitDetailsPanel
-else
-    SideDetailPanel = DressUpFrame.CustomSetDetailsPanel
-end
+local SideDetailPanel = DressUpFrame.CustomSetDetailsPanel
 
 -- Undress button
 undressButton = CreateFrame("Button", nil, SideDetailPanel, "UIPanelButtonTemplate")
